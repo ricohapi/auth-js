@@ -1,0 +1,24 @@
+{
+  "name": "ricohapi-auth",
+  "version": "1.0.0",
+  "description": "RICOH API auth",
+  "main": "index.js",
+  "dependencies": {
+    "vcp-service-client": "1.0.2",
+    "vcp-service-client-proxy": "0.0.3"
+  },
+  "engines": {
+    "node": ">=5.0.0",
+    "npm": ">=3.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricohapi/auth-js.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/ricohapi/auth-js/issues"
+  },
+  "homepage": "https://github.com/ricohapi/auth-js"
+}
