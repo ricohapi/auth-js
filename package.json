@@ -1,6 +1,6 @@
 {
   "name": "ricohapi-auth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "RICOH API auth",
   "main": "index.js",
   "dependencies": {
@@ -11,14 +11,16 @@
     "node": ">=5.0.0",
     "npm": ">=3.0.0"
   },
-  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ricohapi/auth-js.git"
   },
-  "keywords": [],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ricohapi/auth-js/issues"
   },
-  "homepage": "https://github.com/ricohapi/auth-js"
+  "homepage": "https://github.com/ricohapi/auth-js#readme"
 }

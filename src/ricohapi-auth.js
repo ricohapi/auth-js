@@ -50,7 +50,7 @@ class AuthClient {
         .then(() => this._vcpClient.discovery(scope))
         .then(result => {
           this.accessToken = result[scope].access_token;
-          resolve(this.accessToken);
+          resolve(result[scope]);
         })
         .catch(reject);
     });
