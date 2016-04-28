@@ -68,7 +68,7 @@ class AuthClient {
   _storeTokenInfo(r) {
     this.accessToken = r.access_token;
     this._refreshToken = r.refresh_token;
-    this._expire = r.expires_in * 1000 + Date.now();
+    this._expire = r.expires_in * 1000 + Date.now() - (10 * 1000); // 10sec:margin
   }
 
   /**
@@ -140,7 +140,7 @@ class AuthClient {
       return Promise.resolve(this.accessToken);
     }
     return this._r.request(this._refreshRequest())
-      .then(ret => this._storeTokenInfo(ret))
+      .then(ret => this._storeTokenInfo(ret.data))
       .then(() => Promise.resolve(this.accessToken));
   }
 

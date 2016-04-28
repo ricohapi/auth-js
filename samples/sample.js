@@ -6,9 +6,10 @@
 
 const AuthClient = require('../src/ricohapi-auth').AuthClient;
 const CONFIG = require('./config').CONFIG;
+const USER = require('./config').USER;
 
 const client = new AuthClient(CONFIG.clientId, CONFIG.clientSecret);
-client.setResourceOwnerCreds(CONFIG.userId, CONFIG.userPass);
+client.setResourceOwnerCreds(USER.userId, USER.userPass);
 client.session(AuthClient.SCOPES.MStorage)
 .then(ret => {
   console.log(ret);

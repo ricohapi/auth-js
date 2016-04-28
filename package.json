@@ -4,7 +4,7 @@
   "description": "RICOH API auth",
   "main": "index.js",
   "dependencies": {
-    "axios": "0.10.0"
+    "axios": "0.11.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -16,7 +16,6 @@
     "eslint": "^2.2.0",
     "eslint-config-airbnb": "^6.0.2",
     "eslint-plugin-react": "^4.1.0",
-    "gulp": "^3.9.1",
     "gulp-eslint": "^2.0.0",
     "gulp-istanbul": "^0.10.3",
     "gulp-mocha": "^2.2.0",

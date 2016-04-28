@@ -1,7 +1,9 @@
 module.exports = {
-  entry: './samples/main.js',
+  entry: './samples/index.js',
   output: {
-    filename: './build/bundle.js'
+    filename: './build/ricohapi-auth.js',
+    library: "RicohAPIAuth",
+    libraryTarget: "umd"
   },
   module: {
     loaders: [{
