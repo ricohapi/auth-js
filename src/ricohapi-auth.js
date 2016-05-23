@@ -4,66 +4,153 @@
  * See LICENSE for more information
  */
 
-const VCPClient = require('vcp-service-client').VCPClient;
+const axios = require('axios');
 
-const AUTH_ENDPOINT = 'https://auth.beta2.ucs.ricoh.com';
 const SCOPES = {
   auth: 'https://ucs.ricoh.com/scope/api/auth',
   discovery: 'https://ucs.ricoh.com/scope/api/discovery',
-  udc2: 'https://ucs.ricoh.com/scope/api/udc2',
 };
+
+const AUTH_EP = 'https://auth.beta2.ucs.ricoh.com/auth';
 
 class AuthClient {
 
+  _transform(data) {
+    const str = [];
+    for (const p in data) {
+      if (!data.hasOwnProperty(p)) continue;
+      str.push(`${encodeURIComponent(p)}=${encodeURIComponent(data[p])}`);
+    }
+    return str.join('&');
+  }
+
+  _authRequest() {
+    return {
+      method: 'post',
+      url: `${AUTH_EP}/token`,
+      data: {
+        client_id: this._clientId,
+        client_secret: this._clientSecret,
+        username: this._username,
+        password: this._password,
+        scope: this._scopes.join(' '),
+        grant_type: 'password',
+      },
+    };
+  }
+
+  _discoveryRequest(scope, token) {
+    return {
+      method: 'post',
+      url: `${AUTH_EP}/discovery`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        scope,
+      },
+    };
+  }
+
+  _refreshRequest() {
+    return {
+      method: 'post',
+      url: `${AUTH_EP}/token`,
+      data: {
+        refresh_token: this._refreshToken,
+        client_id: this._clientId,
+        client_secret: this._clientSecret,
+        grant_type: 'refresh_token',
+      },
+    };
+  }
+
+  _storeTokenInfo(r) {
+    this.accessToken = r.access_token;
+    this._refreshToken = r.refresh_token;
+    this._expire = r.expires_in * 1000 + Date.now() - (10 * 1000); // 10sec:margin
+  }
+
+  /**
+   * @param {String} clientId - client ID
+   * @param {String} clientSecret - client secret
+   */
   constructor(clientId, clientSecret, params) {
     if (clientSecret === undefined) throw new Error('parameter error');
 
-    this._authParams = {
-      grant_type: 'password',
-      scope: [SCOPES.auth, SCOPES.discovery],
-      client_id: clientId,
-      client_secret: clientSecret,
+    this._scopes = [SCOPES.auth, SCOPES.discovery];
+    this._clientId = clientId;
+    this._clientSecret = clientSecret;
+
+    const defaults = {
+      transformRequest: [this._transform],
+      withCredentials: false,
     };
-    if (!params) return;
-    Object.keys(params).forEach(k => {
-      if (typeof params[k] !== 'object') {
-        this[k] = params[k];
-      } else {
-        Object.keys(params[k]).forEach(k2 => {
-          this[k][k2] = params[k][k2];
-        });
-      }
-    });
+    if (params && params.agent) {
+      defaults.agent = params.agent;
+    }
+    this._r = axios.create(defaults);
   }
 
+  /**
+   * set OAuth resource owner credentials.
+   *
+   * @param {String} user - resource owner user ID
+   * @param {String} pass - resource owner password
+   */
   setResourceOwnerCreds(user, pass) {
-    this._authParams.username = user;
-    this._authParams.password = pass;
+    if (pass === undefined) throw new Error('parameter error');
+
+    this._username = user;
+    this._password = pass;
   }
 
+  /**
+   * open OAuth session
+   *
+   * @param {String} scope - OAuth scope
+   * @returns {Promise} resolve when authenticated, reject otherwise
+   */
   session(scope) {
-    this._authParams.scope.push(scope)
-    this._vcpClient = new VCPClient(AUTH_ENDPOINT, this._authParams);
+    if (!this._username || !this._password) {
+      throw new Error('state error: need resource owner credentials');
+    }
+    if (scope === undefined) throw new Error('parameter error');
+    this._scopes.push(scope);
 
-    return new Promise((resolve, reject) => {
-      this._vcpClient.auth()
-        .then(() => this._vcpClient.discovery(scope))
-        .then(result => {
-          this.accessToken = result[scope].access_token;
-          resolve(result[scope]);
-        })
-        .catch(reject);
-    });
+    return this._r.request(this._authRequest())
+      .then(ret => this._r.request(this._discoveryRequest(scope, ret.data.access_token)))
+      .then(ret => {
+        this._storeTokenInfo(ret.data[scope]);
+        return Promise.resolve(ret.data[scope]);
+      });
+  }
+
+  /**
+   * return valid access_token (update token if needed)
+   *
+   * @param {String} scope - OAuth scope
+   * @returns {Promise} resolve when got, reject otherwise
+   */
+  getAccessToken() {
+    if (this.accessToken === undefined) {
+      throw new Error('state error: call session()');
+    }
+    if (Date.now() < this._expire) {
+      return Promise.resolve(this.accessToken);
+    }
+    return this._r.request(this._refreshRequest())
+      .then(ret => this._storeTokenInfo(ret.data))
+      .then(() => Promise.resolve(this.accessToken));
   }
 
   static get SCOPES() {
     return {
-      MStorage: SCOPES.udc2,
-      VStream: SCOPES.udc2,
-      CameraCtl: SCOPES.udc2,
-    }
+      MStorage: 'https://ucs.ricoh.com/scope/api/udc2',
+      VStream: 'https://ucs.ricoh.com/scope/api/udc2',
+      CameraCtl: 'https://ucs.ricoh.com/scope/api/udc2',
+    };
   }
-
 }
 
 exports.AuthClient = AuthClient;
