@@ -1,6 +1,6 @@
 {
   "name": "ricohapi-auth",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "RICOH API auth",
   "main": "index.js",
   "dependencies": {

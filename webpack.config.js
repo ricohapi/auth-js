@@ -9,13 +9,19 @@ module.exports = {
     loaders: [{
       test: /\.js$/,
       loader: 'babel',
+      exclude: /node_modules/,
       query: {
         presets: ['es2015'],
-        compact: false
+        compact: false,
+        cacheDirectory: true
       }
     }]
   },
   resolve: {
     extensions: ['', '.js'],
+    modulesDirectories: ['node_modules'],
+    module: {
+      noParse: [ /\.\/dada\//, /\.\/nightwatch\// ],
+    },
   }
 };
