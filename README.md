@@ -19,7 +19,7 @@ $ npm install ricohapi-auth
 
 ## Authentication
 
-```sh
+```JavaScript
 const AuthClient = require('ricohapi-auth').AuthClient;
 
 const client = new AuthClient('<your_client_id>', '<your_client_secret>');
@@ -33,7 +33,7 @@ client.session(AuthClient.SCOPES.MStorage)
 
 ### Constructor
 
-```sh
+```JavaScript
 const client = new AuthClient('<your_client_id>', '<your_client_secret>');
 ```
 
@@ -41,13 +41,13 @@ const client = new AuthClient('<your_client_id>', '<your_client_secret>');
  
 This service only supports the resource owner password credentials flow.
 
-```sh
+```JavaScript
 client.setResourceOwnerCreds('<your_user_id>', '<your_password>');
 ```
 
 ### Open session
 
-```sh
+```JavaScript
 client.session('<scope>');
 ```
 A Promise is returned.
@@ -56,8 +56,7 @@ A Promise is returned.
 
 The access token will be refreshed automatically as needed.
 
-```sh
+```JavaScript
 client.getAccessToken();
 ```
 A Promise is returned.
-

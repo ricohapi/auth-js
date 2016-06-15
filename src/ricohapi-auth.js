@@ -11,23 +11,20 @@ const SCOPES = {
   discovery: 'https://ucs.ricoh.com/scope/api/discovery',
 };
 
-const AUTH_EP = 'https://auth.beta2.ucs.ricoh.com/auth';
-
 class AuthClient {
 
   _transform(data) {
     const str = [];
-    for (const p in data) {
-      if (!data.hasOwnProperty(p)) continue;
+    Object.keys(data).forEach(p => {
       str.push(`${encodeURIComponent(p)}=${encodeURIComponent(data[p])}`);
-    }
+    });
     return str.join('&');
   }
 
   _authRequest() {
     return {
       method: 'post',
-      url: `${AUTH_EP}/token`,
+      url: '/token',
       data: {
         client_id: this._clientId,
         client_secret: this._clientSecret,
@@ -42,7 +39,7 @@ class AuthClient {
   _discoveryRequest(scope, token) {
     return {
       method: 'post',
-      url: `${AUTH_EP}/discovery`,
+      url: '/discovery',
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -55,7 +52,7 @@ class AuthClient {
   _refreshRequest() {
     return {
       method: 'post',
-      url: `${AUTH_EP}/token`,
+      url: '/token',
       data: {
         refresh_token: this._refreshToken,
         client_id: this._clientId,
@@ -85,6 +82,7 @@ class AuthClient {
     const defaults = {
       transformRequest: [this._transform],
       withCredentials: false,
+      baseURL: 'https://auth.beta2.ucs.ricoh.com/auth',
     };
     if (params && params.agent) {
       defaults.agent = params.agent;

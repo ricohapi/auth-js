@@ -88,7 +88,7 @@ describe('AuthClient', () => {
       a.setResourceOwnerCreds('uid', 'upass');
       return a.session('scope1')
         .then(() => {
-          expect(AXStub.firstCall.args[0].url).to.have.string('https://auth.beta2.ucs.ricoh.com/auth/token');
+          expect(AXStub.firstCall.args[0].url).to.have.string('/token');
           expect(AXStub.firstCall.args[0].data.client_id).to.have.string('cid');
           expect(AXStub.firstCall.args[0].data.client_secret).to.have.string('csec');
           expect(AXStub.firstCall.args[0].data.username).to.have.string('uid');
@@ -97,7 +97,7 @@ describe('AuthClient', () => {
           expect(AXStub.firstCall.args[0].data.grant_type).to.have.string('password');
 
           expect(AXStub.secondCall.args[0].headers.Authorization).to.have.string('Bearer atoken');
-          expect(AXStub.secondCall.args[0].url).to.have.string('https://auth.beta2.ucs.ricoh.com/auth/discovery');
+          expect(AXStub.secondCall.args[0].url).to.have.string('/discovery');
           expect(AXStub.secondCall.args[0].data.scope).to.have.string('scope1');
 
           expect(a.accessToken).to.have.string('atoken');
@@ -155,7 +155,7 @@ describe('AuthClient', () => {
           a._expire = a._expire - 1000 * 1000;
           a.getAccessToken();
 
-          expect(AXStub.lastCall.args[0].url).to.have.string('https://auth.beta2.ucs.ricoh.com/auth/token');
+          expect(AXStub.lastCall.args[0].url).to.have.string('/token');
           expect(AXStub.lastCall.args[0].data.refresh_token).to.have.string('rtoken');
           expect(AXStub.lastCall.args[0].data.client_id).to.have.string('cid');
           expect(AXStub.lastCall.args[0].data.client_secret).to.have.string('csec');

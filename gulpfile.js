@@ -1,19 +1,19 @@
-var gulp = require('gulp'),
-  eslint = require('gulp-eslint'),
-  mocha = require('gulp-mocha'),
-  istanbul = require('gulp-istanbul'),
-  webserver = require('gulp-webserver'),
-  webpack = require('webpack-stream'),
-  webpackConfig = require('./webpack.config.js');
+const gulp = require('gulp');
+const eslint = require('gulp-eslint');
+const mocha = require('gulp-mocha');
+const istanbul = require('gulp-istanbul');
+const webserver = require('gulp-webserver');
+const webpack = require('webpack-stream');
+const webpackConfig = require('./webpack.config.js');
 
-gulp.task('run', function () {
-    gulp.src('')
-        .pipe(webserver({
-            host: 'localhost',
-            port: 8034,
-            open: true,
-            fallback: 'samples/index.html'
-        }));
+gulp.task('server', function() {
+  gulp.src('')
+    .pipe(webserver({
+      host: 'localhost',
+      port: 8034,
+      open: true,
+      fallback: 'samples/index.html'
+    }));
 });
 
 gulp.task('build', function() {
